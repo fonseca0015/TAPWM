@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Pesquisa de Opinião</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input, select, button {
+      margin: 5px;
+    }
+    #saida {
+      white-space: pre-wrap;
+      margin-top: 20px;
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pesquisa de Opinião</h1>
+
+  <input type="number" id="idade" placeholder="Idade" min="1">
+  <select id="sexo">
+    <option value="" disabled selected>Sexo</option>
+    <option value="masculino">Masculino</option>
+    <option value="feminino">Feminino</option>
+    <option value="outros">Outros</option>
+  </select>
+  <select id="opiniao">
+    <option value="" disabled selected>Opinião</option>
+    <option value="4">Ótimo</option>
+    <option value="3">Bom</option>
+    <option value="2">Regular</option>
+    <option value="1">Péssimo</option>
+  </select>
+  <button onclick="adicionarPessoa()">Adicionar</button>
+
+  <br><br>
+  <button onclick="mostrarResultados()">Mostrar Resultados</button>
+
+  <div id="saida"></div>
+
+  <script>
+    const pessoas = [];
+
+    function adicionarPessoa() {
+      const idade = parseInt(document.getElementById("idade").value);
+      const sexo = document.getElementById("sexo").value;
+      const opiniao = parseInt(document.getElementById("opiniao").value);
+
+      if (!idade || !sexo || !opiniao) {
+        alert("Preencha todos os campos!");
+        return;
+      }
+
+      pessoas.push({ idade, sexo, opiniao });
+
+      document.getElementById("idade").value = '';
+      document.getElementById("sexo").value = '';
+      document.getElementById("opiniao").value = '';
+      alert("Resposta adicionada!");
+    }
+
+    function mostrarResultados() {
+      const total = pessoas.length;
+      if (total === 0) {
+        alert("Nenhuma resposta registrada!");
+        return;
+      }
+
+      let somaIdades = 0;
+      let maisVelho = -Infinity;
+      let maisNovo = Infinity;
+      let pessimoCount = 0;
+      let otimoBomCount = 0;
+      let sexoContagem = { masculino: 0, feminino: 0, outros: 0 };
+
+      pessoas.forEach(p => {
+        somaIdades += p.idade;
+        if (p.idade > maisVelho) maisVelho = p.idade;
+        if (p.idade < maisNovo) maisNovo = p.idade;
+        if (p.opiniao === 1) pessimoCount++;
+        if (p.opiniao === 3 || p.opiniao === 4) otimoBomCount++;
+        sexoContagem[p.sexo]++;
+      });
+
+      const saida = `
+Total de respostas: ${total}
+Média de idade: ${(somaIdades / total).toFixed(2)}
+Idade da pessoa mais velha: ${maisVelho}
+Idade da pessoa mais nova: ${maisNovo}
+Quantidade que responderam 'péssimo': ${pessimoCount}
+Porcentagem que responderam 'ótimo' ou 'bom': ${((otimoBomCount / total) * 100).toFixed(2)}%
+Número de mulheres: ${sexoContagem.feminino}
+Número de homens: ${sexoContagem.masculino}
+Número de outros: ${sexoContagem.outros}
+      `;
+
+      document.getElementById("saida").innerText = saida;
+    }
+  </script>
+</body>
+</html>
